@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+   
+
+</style>
+<html>
+<head>
+    <title>sgao87</title>
+    <script src="../lib/d3.v5.min.js"></script>
+    <script src="../lib/topojson.v2.min.js"></script>
+    <script src="../lib/d3-tip.min.js"></script>
+</head>
+<body>
+    <div id = "graph"></div>
+
+<script>
+var margin = {top:20, right:90, bottom:30, left:90},
+    width = 1000 - margin.left - margin.right,
+    height = 1000 - margin.top - margin.bottom;
+var svg = d3.select("#graph").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+
+var group = svg.append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+Promise.all([
+    d3.csv("county_poverty.csv"),
+    d3.csv("county_detail.csv"),
+    d3.json("us.json")
+]).then(function(files){
+
+    const path = d3.geoPath();
+    group.selectAll("path")
+        .datum(topojson.feature(us, us.objects.counties).features).enter()
+        .append("path")
+        .attr("fill", "blue");
+        
+
+}).catch(function(err){
+
+});
+
+
+
+
+</script>    
+</body>
+</html>

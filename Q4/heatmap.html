@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    .legend{
+        width: 500;
+        height: 100;
+        margin: auto;
+    }
+    #heatmap{
+        width: 800;
+        height: 800;
+        background: pink;
+    }
+    
+</style>
+<html>
+<head>
+    <title>sgao87</title>
+    <script src="../lib/d3.v5.min.js"></script>
+</head>
+<body>
+    <h1 align = "center">Visualizing Crimes in New York City</h1>
+    <div align = "center">Year</div>
+    <select>
+        <option value="2011">2011</option>
+        <option value="2012">2012</option>
+        <option value="2013">2013</option>
+        <option value="2014">2014</option>
+        <option value="2015">2015</option>
+    </select>
+    <div id = "heatmap" ></div>
+    <div class = "legend" align = "center">No. of Crimes</div>
+
+    <!-- JS file -->
+    <script>
+    // chart
+    var margin = {top:30, right:30, bottom:30, left:30},
+        width = 1000 - margin.left - margin.right,
+        height = 1000 - margin.top - margin.bottom;
+    var gridsize = 50;
+    
+    var blocks = ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"],
+        crimeType = ["Assault", "Burglary", "Housing", "Murder", "Robbery", "Shooting"];
+
+    
+    var svg = d3.select("#heatmap").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .append("g");
+    
+    var colorScale = d3.scaleLinear().range(["white", "blue"]);
+   
+    
+    d3.csv("heatmap.csv")
+        .then(function(data){
+
+
+    })
+    .catch(function(error){
+        if (error) console.log(error);
+    });
+
+    
+    
+
+
+    
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+Q3.a.2
+From Budget vs. Rating plot, we can find out that there is no obvious relationship between budget and rating. Some movies have small budget, but they have good rating. Some movies have large budget, but they have bad rating.
+
+Q3.c
+The sqrt scale and log scale is more helpful when visualizing data. These two scales can make small number not so small compared to large numbers. Then it is more convinent for us to visualize data.
