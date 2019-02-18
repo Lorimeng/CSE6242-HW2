@@ -6,11 +6,11 @@
         height: 100;
         margin: auto;
     }
-    #heatmap{
+    /* .heatmap{
         width: 800;
         height: 800;
         background: pink;
-    }
+    } */
     
 </style>
 <html>
@@ -20,52 +20,157 @@
 </head>
 <body>
     <h1 align = "center">Visualizing Crimes in New York City</h1>
-    <div align = "center">Year</div>
-    <select>
-        <option value="2011">2011</option>
-        <option value="2012">2012</option>
-        <option value="2013">2013</option>
-        <option value="2014">2014</option>
-        <option value="2015">2015</option>
-    </select>
-    <div id = "heatmap" ></div>
-    <div class = "legend" align = "center">No. of Crimes</div>
-
+    <div class = "dropBox" align = "center">Year</div>
+    <div class = "heatmap" align= "center"></div>
+    
     <!-- JS file -->
     <script>
     // chart
-    var margin = {top:30, right:30, bottom:30, left:30},
+    var margin = {top:50, right:50, bottom:50, left:50},
         width = 1000 - margin.left - margin.right,
         height = 1000 - margin.top - margin.bottom;
-    var gridsize = 50;
-    
-    var blocks = ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"],
-        crimeType = ["Assault", "Burglary", "Housing", "Murder", "Robbery", "Shooting"];
-
-    
-    var svg = d3.select("#heatmap").append("svg")
+    var gridsize = 60;
+    var legendWidth = 60;
+    var legendHeight = 30;
+    var flag = false;
+    var blocks = ["Borough", "Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"],
+        crimeType = ["Assault", "Burglary", "Housing", "Murder", "Robbery", "Shooting", "Crime Type"],
+        year = ["2011", "2012", "2013", "2014", "2015"];
+    var svg = d3.select(".heatmap").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .append("g");
     
-    var colorScale = d3.scaleLinear().range(["white", "blue"]);
-   
-    
+    var colors = ["#ffffe0", "#ffdfa9", "#ffbd84", "#ff976d", "#f47461", "#e25056", "#cb2f44", "#ae112a", "#8b0000"];
     d3.csv("heatmap.csv")
         .then(function(data){
+        
+        var select = d3.select(".dropBox")
+                .append("select")
+                .attr("class", "select")
+                .on("change", onchange);
+        var options = select.selectAll("option")
+                    .data(year)
+                    .enter()
+                    .append("option")
+                    .text(function(d){ return d;})
+        
+        onchange();
+        function onchange () {
 
+            d3.selectAll("svg").remove();
+            svg = d3.select(".heatmap").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .append("g");
+            var selectYear = d3.select("select").property("value");
+            
+            //d3.select(".heatmap").append("p").text(selectYear);
+            var dataset = [];
+            data.forEach(function(d){
+                if (d.Year === selectYear) {
+                    dataset.push({
+                        "key": d["Crime Type"], 
+                        "value": [d["Bronx"], d["Brooklyn"], d["Manhattan"], d["Queens"], d["Staten Island"]]
+                    });
+                }
+            });
+            var dataArray = [];
+            dataArray.push(dataset[2].value);
+            dataArray.push(dataset[3].value);
+            dataArray.push(dataset[5].value);
+            dataArray.push(dataset[0].value);
+            dataArray.push(dataset[1].value);
+            dataArray.push(dataset[4].value);
+            dataArray = dataArray[0].concat(dataArray[1])
+                                    .concat(dataArray[2])
+                                    .concat(dataArray[3])
+                                    .concat(dataArray[4])
+                                    .concat(dataArray[5]);
+
+            var max = d3.max(dataArray, function(d){ return parseInt(d)});
+            var colorScale = d3.scaleQuantile().domain([0, 8, max]).range(colors);
+            // heatmap begins
+            var beginX = width/4, beginY = 70;
+            svg.selectAll(".tile")
+                .data(dataArray).enter()
+                .append("rect")
+                .attr("x", function(d,i){ return beginX+Math.floor(i/5)*gridsize;})
+                .attr("y", function(d,i){ return beginY+(i%5)*gridsize;})
+                .attr("width", gridsize)
+                .attr("height", gridsize)
+                .style("stroke", "black")
+                .style("fill", function(d){ return colorScale(d)});
+
+            var ylabel = svg.selectAll(".ylabel")
+                .data(blocks).enter()
+                .append("text")
+                .text(function(d){return d;})
+                .attr("x", function(d,i){ return beginX - 90;})
+                .attr("y", function(d,i){ 
+                    if (i == 0){
+                        return beginY - 20;
+                    } else {
+                        return beginY+((i-1)%5)*gridsize + 30;
+                    }
+                    
+                })
+                .style("text-anchor", "start")
+                .style("font-weight", function(d,i){ if (i == 0) return "bold";});
+
+            var xlabel = svg.selectAll(".xlabel")
+                .data(crimeType).enter()
+                .append("text")
+                .text(function(d){ return d;})
+                .attr("y", function(d,i){ return beginY + 5*gridsize + 20;})
+                .attr("x", function(d,i){ 
+                    if (i == 6){
+                        return beginX + 6*gridsize + 20;
+                    } else {
+                        
+                        return beginX + ((i-1)%6)*gridsize + 65;
+                    }
+                    
+                })
+                .style("text-anchor", "start")
+                .style("font-weight", function(d,i){ if (i == 6) return "bold";});
+            
+            //legend begins
+            var legend = svg.selectAll(".legend")
+                .data([0].concat(colorScale.quantiles())).enter();
+            //console.log([0].concat(colorScale.quantiles()));
+
+            legend.append("text")
+                .attr("class", "legend")
+                .attr("x", beginX+2*gridsize)
+                .attr("y", beginY+6*gridsize)
+                .text("No. of Crimes");
+
+            legend.append("rect")
+                .attr("x", function(d, i){ return (i+2)*legendWidth})
+                .attr("y", beginY + 7*gridsize - 50)
+                .attr("width", legendWidth)
+                .attr("height", legendHeight)
+                .style("fill", function(d, i){ return colors[i]});
+            
+            legend.append("text")
+                .attr("class", "l")
+                .text(function(d){
+                    //console.log(d); 
+                    return Math.round(d);
+                })
+                .attr("x", function(d, i){ return (i+2)*legendWidth})
+                .attr("y", beginY + 7*gridsize);
+            
+           
+        }
 
     })
     .catch(function(error){
-        if (error) console.log(error);
+        
     });
-
-    
-    
-
-
-    
     </script>
 
 </body>
