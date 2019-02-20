@@ -1,5 +1,6 @@
 Q3.a.2
-From Budget vs. Rating plot, we can find out that there is no obvious relationship between budget and rating. Some movies have small budget, but they have good rating. Some movies have large budget, but they have bad rating.
-
+Feature 10 vs. Feature 6 combination if better at separating the classes.
+Beacuse from the plot of Feature 10 vs. Feature 6, both good rating points and bad rating points are clustering.
 Q3.c
-The sqrt scale and log scale is more helpful when visualizing data. These two scales can make small number not so small compared to large numbers. Then it is more convinent for us to visualize data.
+sqrt/log scale can make small number not so small compared to large numbers, and also make large number not so large compared to small numbers.
+Using sqrt/log scale is more obvious, if min value and max value of data has large difference or the data is nonlinear. 

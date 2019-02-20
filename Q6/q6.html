@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-/* #graph {
-    width: 800px;
-    height: 800px;
-    background-color: pink;
-} */
+
 div.tooltip {
     position: absolute;
     text-align: center;
-    width: 60px;
-    height: 30px;
-    padding: 2px;
+    width: 150px;
+    height: 70px;
+    padding: 8px;
     font: 12px sans-serif;
-
+    background-color: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
 }
+
 </style>
 <html>
 <head>
@@ -36,7 +36,7 @@ var svg = d3.select("#graph").append("svg")
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var div = d3.select("#graph").append("div")
+var tooltip = d3.select("#graph").append("div")
             .attr("class", "tooltip")
             .style("opacity", 0);
 Promise.all([
@@ -52,26 +52,55 @@ Promise.all([
     countyPoverty.forEach(function(d){
         poverty[+d.CensusId] = +d.Poverty;
     });
-
-
     var colors = ["#ffffe0", "#ffdfa9", "#ffbd84", "#ff976d", "#f47461", "#e25056", "#cb2f44", "#ae112a", "#8b0000"];
     var colorScale = d3.scaleThreshold().domain([2, 4, 6, 8, 10, 12, 14, 16, 18]).range(colors);
 
     var path = d3.geoPath();
     var geojson = topojson.feature(usMap, usMap.objects.counties);
+
     svg.selectAll("path")
         .data(geojson.features)
         .enter().append("path")
         .attr("fill", function(d){ 
             return colorScale(poverty[+d.id]);
         })
-        .attr("d", path);
-        
+        .attr("d", path)
+        .on("mouseover", function(d){
+            var show = [];
+            countyPoverty.forEach(function(a){
+                if (d.id == a.CensusId) {
+                    show["state"] = a.State;
+                    show["county"] = a.County;
+                    show["poverty rate"] = a.Poverty;
+                }
+            })
+            countyDetail.forEach(function(a){
+                if (d.id == a.CensusId) {
+                    show["total population"] = a.TotalPop;
+                    show["income per capita"] = a.IncomePerCap;
+                }
+            })
+            tooltip.transition().duration(200).style("opacity", 0.9);
+            tooltip.html(
+                "State: " + show["state"] + "<br/>" 
+                + "County: " + show["county"] + "<br/>"
+                + "Poverty Rate: " + show["poverty rate"] + "%" +  "<br/>"
+                + "Total Population: " + show["total population"] + "<br/>"
+                + "Income Per Capita: " + show["income per capita"] 
+            ).style("left", (d3.event.pageX) + "px")
+             .style("top", (d3.event.pageY + 30) + "px");
+        })
+        .on("mouseout", function(d){
+            tooltip.transition().duration(500).style("opacity", 0);
+        });
+    
     svg.append("path")
-    .data(topojson.mesh(usMap, usMap.objects.states, function(a, b){ return a.id !== b.id;}))
-    .append("d", path)
-    .attr("stroke", "black");
-
+    .datum(topojson.mesh(usMap, usMap.objects.states, function(a, b){ return a.id !== b.id;}))
+    .attr("fill", "none")
+    .attr("stroke", "#000")
+    .attr("stroke-width", 0.5)
+    .attr("stroke-linejoin", "round")
+    .attr("d", path);
 
     var legend = svg.selectAll(".legend")
                 .data(colorScale.range().map(function(color){
@@ -102,18 +131,11 @@ Promise.all([
                 })
                 .attr("x", width-30)
                 .attr("y", function(d, i){ return 300+(i+1)*30-10});
-                
 
-
-
-
-
+    
 }).catch(function(err){
 
 });
-
-
-
 </script>    
 </body>
 </html>
