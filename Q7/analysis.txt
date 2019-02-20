@@ -2,19 +2,16 @@
     D3: a programming library for data visualization, which is not easy as excel and Tableau to develop, because user needs to learn JavaScript programming language.
     Tableau and Excel: a tool for data visualization. Do not need to learn programming language, and they are more intuitive for developers.
 2. Ease to maintain the visualization for developers
-    D3: 
-    Tableau: 
-    Excel: 
+    D3: not easy as Tableau and Excel, need to write code, and debug
+    Tableau and Excel: is intuitive, and developers can see the data and graph obviously
 3. Usability of visualization developed for end users
-    D3: D3 is good at usability, because d3 is a library specified for visualization. 
-    Tableau: 
-    Excel: not good as D3, 
+    D3: D3 is good at usability, because d3 is a library specified for visualization, and it has API. 
+    Tableau: not as good as D3, need to drag data into graph and filter data
+    Excel: worse than Tableau
 4. Scalability of visualization to "large" datasets
     D3: good at visualizing large datasets, only need to write code to parde data
-    Tableau: large dataset is hard for user to visualize, because there are so much rows and columns. 
-    Excel: the same as Tableau
+    Tableau and Excel: large dataset is hard for user to visualize, because there are so much rows and columns. 
 5. System requirement to run the visualization for end users
-    D3: need D3 library downloaded or need wifi to access D3 library, and need dataset file
-    Tableau: Need Tableau software, and is not popular as excel, only need dataset file.
-    Excel: Need Excel software, only need dataset file, is the most popular
-
+    D3: need D3 library downloaded or wifi to access D3 library, and need dataset file
+    Tableau and Excel: Need Tableau/Excel software, Tableau is not as popular as excel, only need dataset file.
+   
